@@ -26,6 +26,9 @@ Plugin 'VundleVim/Vundle.vim'
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
 " Plugin 'ascenator/L9', {'name': 'newL9'}
+
+Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+
 Plugin 'othree/html5.vim'
 Plugin 'groenewege/vim-less'
 Plugin 'pangloss/vim-javascript'
@@ -33,8 +36,10 @@ Plugin 'MaxMEllon/vim-jsx-pretty'
 Plugin 'HerringtonDarkholme/yats.vim'
 Plugin 'alvan/vim-closetag'
 Plugin 'mattn/emmet-vim'
-Plugin 'prettier/vim-prettier', { 'do': 'yarn install' }
+"Plugin 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plugin 'iamcco/markdown-preview.nvim'
+
+Plugin 'uguu-org/vim-matrix-screensaver'
 
 "Plugin 'jiangmiao/auto-pairs'
 Plugin 'Raimondi/delimitMate'
@@ -76,11 +81,15 @@ filetype plugin indent on    " required
 
 " autocmd vimenter * NERDTree
 
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+autocmd vimenter * colorscheme gruvbox
+
 syntax on
-set background=light
+set background=dark
 "使用配色方案
 " colorscheme solarized
-colorscheme desert
+"colorscheme desert
 
 "不同文件类型采用不同缩进
 filetype indent on
@@ -91,6 +100,8 @@ filetype plugin indent on
 
 "关闭vi模式
 set nocp
+
+set updatetime=300
 
 "与windows共享剪贴板
 set clipboard+=unnamed
@@ -192,9 +203,9 @@ set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936
 
 "设定字体
 " Menlo, Monaco, 'Courier New', monospace
-set guifont=Courier_New:h11:cANSI
+set guifont=Courier_New:h14:cANSI
 "set guifont=Menlo:h11:cANSI
-set guifontwide=新宋体:h11:cGB2312
+set guifontwide=新宋体:h14:cGB2312
  
 "设定编码
 set enc=utf-8
@@ -214,6 +225,10 @@ vnoremap ∆ :m '>+1<CR>gv=gv
 vnoremap ˚ :m '<-2<CR>gv=gv
 nmap <F8> :TagbarToggle<CR>
 nmap <C-u> :NERDTreeToggle<CR>
+vmap <leader>f <Plug>(coc-format)
+nmap <leader>f <Plug>(coc-format)
+vmap <leader>f <Plug>(coc-format-selected)
+nmap <leader>f <Plug>(coc-format-selected)
 
 " 折叠相关
 set foldmethod=indent
@@ -301,3 +316,5 @@ let g:gitgutter_set_sign_backgrounds = 2
 " ----------------------------------------------------------------------------
 let delimitMate_matchpairs = "(:),[:],{:}"
 let delimitMate_expand_cr = 1
+
+let g:coc_disable_startup_warning = 1
