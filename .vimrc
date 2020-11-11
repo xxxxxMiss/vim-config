@@ -1,6 +1,8 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+packadd! matchit
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -10,23 +12,9 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-" Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
-" Git plugin not hosted on GitHub
-" Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-" Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}CCCC
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-" Plugin 'ascenator/L9', {'name': 'newL9'}
 
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
 Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plugin 'othree/html5.vim'
@@ -38,6 +26,7 @@ Plugin 'alvan/vim-closetag'
 Plugin 'mattn/emmet-vim'
 "Plugin 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plugin 'iamcco/markdown-preview.nvim'
+Plugin 'tpope/vim-surround'
 
 Plugin 'uguu-org/vim-matrix-screensaver'
 
@@ -50,7 +39,6 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'romainl/vim-cool'
 
 Plugin 'majutsushi/tagbar'
-Plugin 'preservim/nerdtree'
 Plugin 'preservim/nerdcommenter'
 Plugin 'ycm-core/YouCompleteMe'
 Plugin 'sheerun/vim-polyglot'
@@ -59,9 +47,16 @@ Plugin 'mg979/vim-visual-multi'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
+Plugin 'preservim/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plugin 'ryanoasis/vim-devicons'
+
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
 Plugin 'morhetz/gruvbox'
+
+Plugin 'bagrat/vim-buffet'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -85,6 +80,34 @@ command! -nargs=0 Prettier :CocCommand prettier.formatFile
 
 autocmd vimenter * colorscheme gruvbox
 
+" 键位映射
+nmap <F8> :TagbarToggle<CR>
+nmap <F5> :NERDTreeToggle<CR>
+vmap <leader>f <Plug>(coc-format)
+nmap <leader>f <Plug>(coc-format)
+tnoremap <Esc><Esc> <C-\><C-N>
+tnoremap <C-V><Esc> <Esc>
+nmap <leader>1 <Plug>BuffetSwitch(1)
+nmap <leader>2 <Plug>BuffetSwitch(2)
+nmap <leader>3 <Plug>BuffetSwitch(3)
+nmap <leader>4 <Plug>BuffetSwitch(4)
+nmap <leader>5 <Plug>BuffetSwitch(5)
+nmap <leader>6 <Plug>BuffetSwitch(6)
+nmap <leader>7 <Plug>BuffetSwitch(7)
+nmap <leader>8 <Plug>BuffetSwitch(8)
+nmap <leader>9 <Plug>BuffetSwitch(9)
+nmap <leader>0 <Plug>BuffetSwitch(10)
+map ,h <C-W>h
+map ,l <C-W>l
+map ,k <C-W>k
+map ,j <C-W>j
+nmap cx a className={cx('')}<Esc>2hi
+iabbrev icx import classNames from 'classnames/bind'<Enter>import styles from './index.module.less'<Enter>const cx = classNames.bind(styles)
+
+"显示尾部多余的空格后者tab
+"set list
+"set listchars=tab:>-,trail:-
+
 syntax on
 set background=dark
 "使用配色方案
@@ -103,6 +126,8 @@ set nocp
 
 set updatetime=300
 
+au CursorHold * checktime
+
 "与windows共享剪贴板
 set clipboard+=unnamed
 
@@ -117,6 +142,9 @@ set history=100
 
 "当文件被外部改变时自动读取
 set autoread 
+
+"tab切换自动保存
+set autowriteall
 
 "取消自动备份及产生swp文件
 set nobackup
@@ -185,9 +213,6 @@ set shiftwidth=2
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
-"取消换行
-set nowrap
-
 "启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atI
 
@@ -198,17 +223,32 @@ set fillchars=vert:\ ,stl:\ ,stlnc:\
 set scrolloff=3
 
 "设定默认解码
-set fenc=utf-8
-set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+set termencoding=utf-8
+set encoding=utf8
+set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 
 "设定字体
-" Menlo, Monaco, 'Courier New', monospace
-set guifont=Courier_New:h14:cANSI
-"set guifont=Menlo:h11:cANSI
-set guifontwide=新宋体:h14:cGB2312
+if has("gui_running")
+    let system = system('uname -s')
+    if system == "Darwin\n"
+        "set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h16 " 设置字体
+				set guifont=DroidSansMono\ Nerd\ Font:h15
+    else
+        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 15      " 设置字体
+    endif
+		set guioptions-=m           " 隐藏菜单栏
+		set guioptions-=T           " 隐藏工具栏
+		set guioptions-=L           " 隐藏左侧滚动条
+		set guioptions-=r           " 隐藏右侧滚动条
+		set guioptions-=b           " 隐藏底部滚动条
+		set showtabline=0           " 隐藏Tab栏
+		"set guicursor=n-v-c:ver5    " 设置光标为竖线
+endif
  
 "设定编码
-set enc=utf-8
+set encoding=utf8
 set fileencodings=ucs-bom,utf-8,chinese
 set langmenu=zh_CN.UTF-8
 language message zh_CN.UTF-8
@@ -216,29 +256,23 @@ source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 source $VIMRUNTIME/vimrc_example.vim
 
-"整行上移或者下移
-nnoremap ∆ :m .+1<CR>==
-nnoremap ˚ :m .-2<CR>==
-inoremap ∆ <Esc>:m .+1<CR>==gi
-inoremap ˚ <Esc>:m .-2<CR>==gi
-vnoremap ∆ :m '>+1<CR>gv=gv
-vnoremap ˚ :m '<-2<CR>gv=gv
-nmap <F8> :TagbarToggle<CR>
-nmap <C-u> :NERDTreeToggle<CR>
-vmap <leader>f <Plug>(coc-format)
-nmap <leader>f <Plug>(coc-format)
-vmap <leader>f <Plug>(coc-format-selected)
-nmap <leader>f <Plug>(coc-format-selected)
 
 " 折叠相关
 set foldmethod=indent
 set foldnestmax=10
 set nofoldenable
-set foldlevel=99
+"set foldlevel=99
+"set foldcolumn=4
+
+" 折行
+set wrap
+set showbreak=->
 
 "自动补全
 filetype plugin indent on
 set completeopt=longest,menu
+
+"set display=truncate
 
 "自动补全命令时候使用菜单式匹配列表
 set wildmenu
@@ -250,7 +284,20 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType java set omnifunc=javacomplete#Complet
 
+" vim-devicons
+let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
+
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
+
+" nerdtree
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+let g:NERDTreeHighlightFolders = 1
+let g:NERDTreeHighlightFoldersFullName = 1
+let g:NERDTreeDirArrowExpandable='▷'
+let g:NERDTreeDirArrowCollapsible='▼'
 
 " ----------------------------------------------------------------------------
 " vim-airline
@@ -260,6 +307,21 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#overflow_marker = '…'
+let g:airline#extensions#tabline#show_tab_nr = 0
+
+" nerdtree-git-plugin
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ 'Ignored'   : '☒',
+            \ "Unknown"   : "?"
+            \ }
 
 " ----------------------------------------------------------------------------
 " vim-colors-solarized
@@ -269,27 +331,6 @@ let g:solarized_termtrans=1
 let g:solarized_contrast="high"
 let g:solarized_visibility="high"
 
-" ----------------------------------------------------------------------------
-" vim-closetag
-" ----------------------------------------------------------------------------
-" filenames like *.xml, *.html, *.xhtml, ...
-" These are the file extensions where this plugin is enabled.
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
-" filenames like *.xml, *.xhtml, ...
-" This will make the list of non-closing tags self-closing in the specified files.
-let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
-" filetypes like xml, html, xhtml, ...
-" These are the file types where this plugin is enabled.
-let g:closetag_filetypes = 'html,xhtml,phtml'
-" filetypes like xml, xhtml, ...
-" This will make the list of non-closing tags self-closing in the specified files.
-let g:closetag_xhtml_filetypes = 'xhtml,jsx'
-" integer value [0|1]
-" This will make the list of non-closing tags case-sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
-let g:closetag_emptyTags_caseSensitive = 1
-" dict
-" Disables auto-close if not in a "valid" region (based on filetype)
-"
 let g:closetag_regions = {
 			\ 'typescript.tsx': 'jsxRegion,tsxRegion',
 			\ 'javascript.jsx': 'jsxRegion',
@@ -318,3 +359,7 @@ let delimitMate_matchpairs = "(:),[:],{:}"
 let delimitMate_expand_cr = 1
 
 let g:coc_disable_startup_warning = 1
+
+
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
